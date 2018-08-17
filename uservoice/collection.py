@@ -49,6 +49,7 @@ class Collection(object):
             else:
                 raise IndexError
         except Unauthorized as e:
+            logging.warn("Unauthorized error; attempting to log back in...")
             if self.client.login_email is None:
                 self.client.login_as_owner()
             else:
