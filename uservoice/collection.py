@@ -3,7 +3,10 @@ from builtins import str
 from builtins import range
 from builtins import object
 from past.utils import old_div
+
 PER_PAGE = 100
+
+
 class Collection(object):
     def __init__(self, client, query, limit=2**60):
         self.client = client
@@ -12,6 +15,7 @@ class Collection(object):
         self.per_page = min(self.limit, PER_PAGE)
         self.pages = {}
         self.response_data = None
+        self.index = -1
 
     def __len__(self):
         if not self.response_data:
@@ -19,6 +23,7 @@ class Collection(object):
                 self[0]
             except IndexError:
                 pass
+
         return min(self.response_data['total_records'], self.limit)
 
     def __getitem__(self, i):
@@ -28,8 +33,16 @@ class Collection(object):
             raise IndexError
 
     def __iter__(self):
-        for index in range(len(self)):
-            yield self[index]
+        return self
+
+    def __next__(self):
+        self.index += 1
+
+        if self.index >= len(self):
+            raise StopIteration
+
+        return self[self.index]
+
 
     def load_page(self, i):
         if not i in self.pages:
@@ -47,4 +60,3 @@ class Collection(object):
             else:
                 raise uservoice.NotFound.new('The resource you requested is not a collection')
         return self.pages[i]
-
