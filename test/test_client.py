@@ -1,10 +1,10 @@
 import yaml
 import unittest
 import uservoice
+print "WWW"
 
 class TestClient(unittest.TestCase):
     def setUp(self):
-        print "FUCK"
         super(TestClient, self).setUp()
         with open('test/config.yml') as f:
             self.config = yaml.load(f)
@@ -95,3 +95,8 @@ class TestClient(unittest.TestCase):
     def test_should_get_page_of_tickets(self):
         tickets = self.client.get("/api/v1/tickets?per_page=2")
         self.assertEqual(len(tickets), 2)
+
+
+
+if __name__ == '__main__':
+    unittest.main()

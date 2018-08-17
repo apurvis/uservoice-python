@@ -5,6 +5,7 @@ from builtins import str
 from builtins import range
 from builtins import object
 from past.utils import old_div
+from requests.exceptions import RequestException
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from uservoice.client import APIError, Unauthorized
 
@@ -17,7 +18,7 @@ class Collection(object):
     RETRY_KWARGS = {
         'after': retry_logger,
         'reraise': True,
-        'retry': retry_if_exception_type(APIError),
+        'retry': retry_if_exception_type((APIError, RequestException)),
         'stop': stop_after_attempt(10),
         'wait': wait_exponential(multiplier=5, max=300)
     }
