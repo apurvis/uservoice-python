@@ -4,6 +4,7 @@ import uservoice
 
 class TestClient(unittest.TestCase):
     def setUp(self):
+        print "FUCK"
         super(TestClient, self).setUp()
         with open('test/config.yml') as f:
             self.config = yaml.load(f)
