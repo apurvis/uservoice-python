@@ -1,7 +1,7 @@
 import yaml
 import unittest
 import uservoice
-print "WWW"
+
 
 class TestClient(unittest.TestCase):
     def setUp(self):
