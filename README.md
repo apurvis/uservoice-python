@@ -55,7 +55,7 @@ print "https://" + USERVOICE_SUBDOMAIN + ".uservoice.com/?sso=" + sso_token
 Making API calls
 ----------------
 
-You need to create an instance of uservoice.Client. Get API_KEY and API_SECRET for an API client which you can create from 
+You need to create an instance of uservoice.Client. Get API_KEY and API_SECRET for an API client which you can create from
 Admin Console. Go to Settings -> Channels -> API.
 
 ```python
@@ -140,3 +140,13 @@ token = u.access_tokens.get(system='uservoice')
 # 2. Use the token and secret to log in
 access_token = client.login_with_access_token(token.token, token.secret)
 ```
+
+
+Specs
+===============
+```
+cp test/config.yml.templ test/config.yml
+python test/test_sso.py
+python test/test_collection.py
+python test/test_client.py
+``

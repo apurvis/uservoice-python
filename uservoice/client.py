@@ -3,7 +3,6 @@ standard_library.install_aliases()
 from builtins import object
 import operator
 import array
-import urllib.request, urllib.parse, urllib.error
 import urllib.request, urllib.error, urllib.parse
 import simplejson as json
 import uservoice
@@ -40,6 +39,7 @@ class Client(object):
         self.subdomain_name = subdomain_name
         self.uservoice_domain = uservoice_domain
         self.protocol = protocol
+        self.login_email = None
 
     def get_request_token(self, callback=None):
         url = self.api_url + '/oauth/request_token'
@@ -126,10 +126,13 @@ class Client(object):
         return uservoice.Collection(self, path, **opts)
 
     def login_as(self, email):
+        self.login_email = email
+
         resp = self.post('/api/v1/users/login_as', {
             'request_token': self.get_request_token().token,
             'user': { 'email': email }
         })
+
         if 'token' in resp:
             token = resp['token']['oauth_token']
             secret = resp['token']['oauth_token_secret']

@@ -16,3 +16,7 @@ class TestSso(unittest.TestCase):
         }, 10)
         print("{protocol}://{subdomain}.{domain}?sso={sso}".format(protocol=self.config.get('protocol', 'https'),domain=self.config.get('uservoice_domain', 'uservoice.com'),subdomain=self.config['subdomain_name'],sso=sso_token))
         self.assertTrue(len(sso_token) > 10)
+
+
+if __name__ == '__main__':
+    unittest.main()

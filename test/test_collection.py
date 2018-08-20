@@ -120,3 +120,6 @@ class TestCollection(unittest.TestCase):
         collection = uservoice.Collection(self.pagedClient, '/api/v1/suggestions', limit=2)
         self.assertEqual(collection[1]['id'], 2)
 
+
+if __name__ == '__main__':
+    unittest.main()

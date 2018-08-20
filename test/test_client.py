@@ -2,6 +2,7 @@ import yaml
 import unittest
 import uservoice
 
+
 class TestClient(unittest.TestCase):
     def setUp(self):
         super(TestClient, self).setUp()
@@ -94,3 +95,7 @@ class TestClient(unittest.TestCase):
     def test_should_get_page_of_tickets(self):
         tickets = self.client.get("/api/v1/tickets?per_page=2")
         self.assertEqual(len(tickets), 2)
+
+
+if __name__ == '__main__':
+    unittest.main()
