@@ -5,6 +5,7 @@ from builtins import str
 from builtins import range
 from builtins import object
 from past.utils import old_div
+from ratelimiter import RateLimiter
 from requests.exceptions import RequestException
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from uservoice.client import APIError, Unauthorized
@@ -31,6 +32,7 @@ class Collection(object):
         self.pages = {}
         self.response_data = None
         self.index = -1
+        self.rate_limiter = RateLimiter(max_calls=180, period=60, callback=Collection._rate_limit_callback)
 
     def __len__(self):
         if not self.response_data:
@@ -45,7 +47,7 @@ class Collection(object):
     def __getitem__(self, i):
         try:
             if i == 0 or (i > 0 and i < len(self)):
-                return self.load_page(int(old_div(i,float(PER_PAGE))) + 1)[i % PER_PAGE]
+                return self.load_page(int(old_div(i, float(PER_PAGE))) + 1)[i % PER_PAGE]
             else:
                 raise IndexError
         except Unauthorized as e:
@@ -69,7 +71,6 @@ class Collection(object):
 
         return self[self.index]
 
-
     def load_page(self, i):
         if not i in self.pages:
             url = self.query
@@ -77,7 +78,9 @@ class Collection(object):
                 url += '&'
             else:
                 url += '?'
-            result = self.client.get(url + "per_page=" + str(self.per_page) + "&page=" + str(i))
+
+            with self.rate_limiter:
+                result = self.client.get(url + "per_page=" + str(self.per_page) + "&page=" + str(i))
 
             if 'response_data' in result:
                 self.response_data = result.pop('response_data')
@@ -86,3 +89,8 @@ class Collection(object):
             else:
                 raise uservoice.NotFound.new('The resource you requested is not a collection')
         return self.pages[i]
+
+    @staticmethod
+    def _rate_limit_callback(until):
+        duration = int(round(until - time.time()))
+        logging.warn('Rate limiting ourselves - sleeping for {:d} seconds'.format(duration))
